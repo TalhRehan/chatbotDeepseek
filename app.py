@@ -2,11 +2,18 @@ from flask import Flask, request, jsonify, render_template
 from langchain_ollama.llms import OllamaLLM
 from langgraph.graph import StateGraph, START, END
 from typing import List, Dict
+import re  # Import regex for removing tags
 
 app = Flask(__name__, template_folder="templates")
 
 # Initialize Ollama LLM
 llm = OllamaLLM(model="deepseek-r1", base_url="http://localhost:11434")
+
+# Function to remove <think> and </think> tags
+def remove_think_tags(response: str) -> str:
+    # Use regex to remove <think> and </think> tags
+    response = re.sub(r"<think>.*?</think>", "", response, flags=re.DOTALL)
+    return response.strip()  # Remove any leading/trailing whitespace
 
 class State(Dict):
     messages: List[Dict[str, str]]
@@ -15,6 +22,8 @@ graph_builder = StateGraph(State)
 
 def chatbot(state: State):
     response = llm.invoke(state["messages"])
+    # Remove <think> and </think> tags
+    response = remove_think_tags(response)
     state["messages"].append({"role": "assistant", "content": response})
     return {"messages": state["messages"]}
 
@@ -28,7 +37,10 @@ def stream_graph_updates(user_input: str):
     state = {"messages": [{"role": "user", "content": user_input}]}
     for event in graph.stream(state):
         for value in event.values():
-            return value["messages"][-1]["content"]
+            response = value["messages"][-1]["content"]
+            # Remove <think> and </think> tags
+            response = remove_think_tags(response)
+            return response
 
 @app.route('/')
 def home():

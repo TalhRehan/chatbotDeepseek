@@ -6,8 +6,8 @@
     <title>Chatbot Interface</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #141e30, #243b55);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,9 +16,9 @@
         }
         .chat-container {
             width: 400px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             overflow: hidden;
             display: flex;
             flex-direction: column;
@@ -28,39 +28,60 @@
             padding: 20px;
             overflow-y: auto;
             border-bottom: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 300px;
         }
         .chat-message {
-            margin-bottom: 15px;
+            max-width: 75%;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-wrap: break-word;
+            animation: fadeIn 0.3s ease-in-out;
         }
         .chat-message.user {
-            text-align: right;
+            align-self: flex-end;
+            background: #007bff;
+            color: #fff;
         }
         .chat-message.assistant {
-            text-align: left;
+            align-self: flex-start;
+            background: #f1f1f1;
+            color: #333;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .chat-input-container {
             display: flex;
-            padding: 10px;
-            background-color: #f9f9f9;
+            padding: 15px;
+            background: #f9f9f9;
         }
         .chat-input {
             flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
             outline: none;
+            font-size: 14px;
+            background: #e9ecef;
         }
         .send-button {
             margin-left: 10px;
-            padding: 10px 20px;
-            background-color: #007bff;
+            padding: 12px 20px;
+            background: #007bff;
             color: #fff;
             border: none;
-            border-radius: 5px;
+            border-radius: 20px;
             cursor: pointer;
+            transition: background 0.3s;
         }
         .send-button:hover {
-            background-color: #0056b3;
+            background: #0056b3;
         }
     </style>
 </head>
@@ -87,28 +108,19 @@
             const userInput = document.getElementById('chat-input').value;
             if (userInput.trim() === "") return;
 
-            // Display user message in the chat
             appendMessage('user', userInput);
-
-            // Clear the input field
             document.getElementById('chat-input').value = '';
 
-            // Send the message to the Flask backend
             fetch('/chat', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message: userInput }),
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: userInput })
             })
             .then(response => response.json())
             .then(data => {
-                // Display the chatbot's response
                 appendMessage('assistant', data.response);
             })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+            .catch(error => console.error('Error:', error));
         }
 
         function appendMessage(sender, message) {
