@@ -9,7 +9,7 @@ app = Flask(__name__, template_folder="templates")
 
 llm = OllamaLLM(model="deepseek-r1", base_url="http://localhost:11434")
 
-# Function to remove <think> and </think> tags
+
 def remove_think_tags(response: str) -> str:
     # Use regex to remove <think> and </think> tags
     response = re.sub(r"<think>.*?</think>", "", response, flags=re.DOTALL)
