@@ -4,7 +4,7 @@ from langgraph.graph import StateGraph, START, END
 from typing import List, Dict
 import re # Import regex for removing tags
 
-app = Flask(__name__, template_folder="templates")
+app = Flask(__name__, template_folder="")
 
 
 llm = OllamaLLM(model="deepseek-r1", base_url="http://localhost:11434")
