@@ -40,4 +40,4 @@ Customization
 You can customize the following aspects of the application:
 Model: Change the Ollama model in app.py by modifying the model parameter
 UI: Adjust the styling in index.html to match your preferences
-Message Processing: Modify the remove_think_tags function to handle different response formatt
+Message Processing: Modify the remove_think_tags function to handle different response format
